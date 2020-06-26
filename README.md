@@ -8,7 +8,8 @@
 
 ### GraphQL API
 * Stateless ,client independent API for data exchange with higher query flexibility.
-* No problem here regarding queries (very flexible)* Only POST requests for every type of request to one single endpoint.
+* No problem here regarding queries (very flexible).
+* Only POST requests for every type of request to one single endpoint.
 
 
 
