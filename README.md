@@ -30,11 +30,15 @@
 * Subscription -- "setup realtime connection with sockets"
 
 ### Design 
-** Event booking API **
+* Event booking API
 1. Event - Create, Update, Delete, View(Read)
 2. Users - Connected to events
          || Filters -- CreatedBy, Booked
          || BooksEvents, Cancel Booking
+
+### Packages
+* npm install --save express body-parser
+* npm install --save-dev nodemon
 
     
 
