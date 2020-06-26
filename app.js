@@ -1,16 +1,15 @@
-const express = require('express');
-const bodyParser=require('body-parser');
+const express = require("express");
+const bodyParser = require("body-parser");
 // exports a valid middleware fn for parsing graphql queries
-const graphqlHttp=require('express-graphql');
+const graphqlHttp = require("express-graphql");
 // getting data using object destructuring
-const { buildSchema } = require('graphql');
-const mongoose= require('mongoose');
-const bcrypt=require('bcryptjs');
+const { buildSchema } = require("graphql");
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 // Models
-const Event=require('./models/event');
-const User=require('./models/user');
-
+const Event = require("./models/event");
+const User = require("./models/user");
 
 const app = express();
 
@@ -19,9 +18,9 @@ const app = express();
 app.use(bodyParser.json()); // to parse incoming json bodies
 
 // all req are sent to /graphql
-app.use('/graphql',
-    graphqlHttp({
-    
+app.use(
+  "/graphql",
+  graphqlHttp({
     // point to schema
     // pass props in schema
     // String! means type is string but can't be null
@@ -75,100 +74,103 @@ app.use('/graphql',
 
     // root value key -- points to object having all resolvers
     rootValue: {
-        // names of queries and resolvers are same
-        events: () => {
-            return Event.find()
-            .then(events=>{
-                return events.map(
-                    event=>{
-                        // convert mongoDB _id to a string so that it can be viewed & understood by graphQL
-                        // return {...event._doc,_id:event._doc._id.toString()};
-                        // or
-                        return {...event._doc,_id:event.id};
-                    }
-                );
-            })
-            .catch(err=>{
-                throw err;
-            })
-        },
-        createEvent: args =>{
-            
-            // simple static method
-            // const event={
-            //     _id:Math.random().toString(),
-            //     title:args.eventInput.title,
-            //     description:args.eventInput.description,
-            //     price:+args.eventInput.price,
-            //     date:args.eventInput.date
-            // };
-            // events.push(event);
-            // return event;
+      // names of queries and resolvers are same
+      events: () => {
+        return Event.find()
+          .then((events) => {
+            return events.map((event) => {
+              // convert mongoDB _id to a string so that it can be viewed & understood by graphQL
+              // return {...event._doc,_id:event._doc._id.toString()};
+              // or
+              return { ...event._doc, _id: event.id };
+            });
+          })
+          .catch((err) => {
+            throw err;
+          });
+      },
+      createEvent: (args) => {
+        // simple static method
+        // const event={
+        //     _id:Math.random().toString(),
+        //     title:args.eventInput.title,
+        //     description:args.eventInput.description,
+        //     price:+args.eventInput.price,
+        //     date:args.eventInput.date
+        // };
+        // events.push(event);
+        // return event;
 
-            // using mongoDB to make event on ATLAS
-            const event=new Event({
-                title: args.eventInput.title,
-                description: args.eventInput.description,
-                price: +args.eventInput.price,
-                date: new Date(args.eventInput.date)
-            });
-            // return here will show graphql to wait while Operation is completed
-            return event
-            .save()
-            .then(result => {
-                console.log(result);
-                // spread operator._doc : gives all core props of our object
-                // return { ...result._doc };
-                // return {...result._doc,_id:result._doc._id.toString()};
-                // or
-                return {...result._doc,_id:result.id};
-            })
-            .catch(err => {
-                console.log(err);
-                throw err;
-            });
-        },
-        createUser: args => {
-            return User.findOne({email:args.userInput.email})
-            .then(user=>{
-                if(user){
-                    throw new Error('User with same email exists already!');
-                }
-                // if no valid user with same email is found
-                return bcrypt.hash(args.userInput.password, 12);
+        // using mongoDB to make event on ATLAS
+        const event = new Event({
+          title: args.eventInput.title,
+          description: args.eventInput.description,
+          price: +args.eventInput.price,
+          date: new Date(args.eventInput.date),
+        });
+        // return here will show graphql to wait while Operation is completed
+        return event
+          .save()
+          .then((result) => {
+            console.log(result);
+            // spread operator._doc : gives all core props of our object
+            // return { ...result._doc };
+            // return {...result._doc,_id:result._doc._id.toString()};
+            // or
+            return { ...result._doc, _id: result.id };
+          })
+          .catch((err) => {
+            console.log(err);
+            throw err;
+          });
+      },
+      createUser: (args) => {
+        return (
+          User.findOne({ email: args.userInput.email })
+            .then((user) => {
+              if (user) {
+                throw new Error("User with same email exists already!");
+              }
+              // if no valid user with same email is found
+              return bcrypt.hash(args.userInput.password, 12);
             })
             // result of bcrypt.hash(..)
-            .then(hashedPass=>{
-                const user = new User({
-                    email: args.userInput.email,
-                    password: hashedPass
-                });
-                // return promise like object
-                return user.save();
+            .then((hashedPass) => {
+              const user = new User({
+                email: args.userInput.email,
+                password: hashedPass,
+              });
+              // return promise like object
+              return user.save();
             })
             // result of user.save()
-            .then(result=>{
-                // password:null so that hashed pass will not even show up 
-                return {...result._doc,password:null,_id:result.id};
+            .then((result) => {
+              // password:null so that hashed pass will not even show up
+              return { ...result._doc, password: null, _id: result.id };
             })
-            .catch(err=>{
-                throw err;
-            });
-        }
+            .catch((err) => {
+              throw err;
+            })
+        );
+      },
     },
-    graphiql: true
-}));
+    graphiql: true,
+  })
+);
 
 // connect to mongo via mongoose
-mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-mmohl.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`)
-.then(()=>{
-    app.listen(3000,()=>{
-        console.log('http://localhost:3000');
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-mmohl.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    app.listen(3000, () => {
+      console.log("http://localhost:3000");
     });
-})
-.catch(err=>{
+  })
+  .catch((err) => {
     console.log(err);
-})
+  });
 
 // merng ,merng
 // test1@gmail.com,test1
