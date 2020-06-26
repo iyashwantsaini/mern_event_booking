@@ -59,7 +59,20 @@ app.use('/graphql',
     rootValue: {
         // names of queries and resolvers are same
         events: () => {
-            return events;
+            return Event.find()
+            .then(events=>{
+                return events.map(
+                    event=>{
+                        // convert mongoDB _id to a string so that it can be viewed & understood by graphQL
+                        // return {...event._doc,_id:event._doc._id.toString()};
+                        // or
+                        return {...event._doc,_id:event.id};
+                    }
+                );
+            })
+            .catch(err=>{
+                throw err;
+            })
         },
         createEvent: args =>{
             
@@ -87,7 +100,9 @@ app.use('/graphql',
                 console.log(result);
                 // spread operator._doc : gives all core props of our object
                 // return { ...result._doc };
-                return result;
+                // return {...result._doc,_id:result._doc._id.toString()};
+                // or
+                return {...result._doc,_id:result.id};
             })
             .catch(err => {
                 console.log(err);
