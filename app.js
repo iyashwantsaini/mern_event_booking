@@ -17,6 +17,37 @@ const app = express();
 
 app.use(bodyParser.json()); // to parse incoming json bodies
 
+const events = (eventIds) => {
+  return Event.find({ _id: { $in: eventIds } })
+    .then((events) => {
+      return events.map((event) => {
+        return {
+          ...event._doc,
+          _id: event.id,
+          creator: user.bind(this, event.creator),
+        };
+      });
+    })
+    .catch((err) => {
+      throw err;
+    });
+};
+
+const user = (userId) => {
+  return User.findById(userId)
+    .then((user) => {
+      return {
+        ...user._doc,
+        _id: user.id,
+        createdEvents: events.bind(this, user._doc.createdEvents),
+      };
+    })
+    .catch((err) => {
+      throw err;
+    });
+};
+
+// OUR GRAPHQL API
 // all req are sent to /graphql
 app.use(
   "/graphql",
@@ -37,12 +68,14 @@ app.use(
             description: String!
             price: Float!
             date: String!
+            creator: User!
         }
         
         type User{
             _id:ID!
             email: String!
             password: String
+            createdEvents: [Event!]
         }
 
         input EventInput{
@@ -76,13 +109,19 @@ app.use(
     rootValue: {
       // names of queries and resolvers are same
       events: () => {
+        //   populate -- mongoose populates all relations
+        // return Event.find().populate('creator')
         return Event.find()
           .then((events) => {
             return events.map((event) => {
               // convert mongoDB _id to a string so that it can be viewed & understood by graphQL
               // return {...event._doc,_id:event._doc._id.toString()};
               // or
-              return { ...event._doc, _id: event.id };
+              return {
+                ...event._doc,
+                _id: event.id,
+                creator: user.bind(this, event._doc.creator),
+              };
             });
           })
           .catch((err) => {
@@ -107,22 +146,38 @@ app.use(
           description: args.eventInput.description,
           price: +args.eventInput.price,
           date: new Date(args.eventInput.date),
+          creator: "5ef5d699c216df6db7194a64",
         });
+        let createdEvent;
         // return here will show graphql to wait while Operation is completed
-        return event
-          .save()
-          .then((result) => {
-            console.log(result);
-            // spread operator._doc : gives all core props of our object
-            // return { ...result._doc };
-            // return {...result._doc,_id:result._doc._id.toString()};
-            // or
-            return { ...result._doc, _id: result.id };
-          })
-          .catch((err) => {
-            console.log(err);
-            throw err;
-          });
+        return (
+          event
+            .save()
+            .then((result) => {
+              createdEvent = {
+                ...result._doc,
+                password: null,
+                _id: result.id,
+                creator: user.bind(this, result._doc.creator),
+              };
+              return User.findById("5ef5d699c216df6db7194a64");
+            })
+            // for user.findById()
+            .then((user) => {
+              if (!user) {
+                throw new Error("User does not exist!");
+              }
+              user.createdEvents.push(event);
+              return user.save();
+            })
+            .then((result) => {
+              return createdEvent;
+            })
+            .catch((err) => {
+              console.log(err);
+              throw err;
+            })
+        );
       },
       createUser: (args) => {
         return (

@@ -66,3 +66,7 @@
 ### Error Fixes
 
 - if graphiql not working try on "http" instead of "https"
+
+### Remember 
+ 
+- Dates are passed via "new Date().toISOString()"
