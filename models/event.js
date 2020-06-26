@@ -19,6 +19,11 @@ const eventSchema = new Schema({
     date:{
         type:Date,
         required:true
+    },
+    creator:{
+        type:Schema.Types.ObjectId,
+        // make connection to User model
+        ref: 'User'
     }
 });
 

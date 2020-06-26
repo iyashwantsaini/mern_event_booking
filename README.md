@@ -43,7 +43,9 @@
 * npm install --save-dev nodemon 
 <!-- graph for express -->
 * npm install --save express-graphql graphql
-* npm install --save mongoose 
+* npm install --save mongoose
+ <!--for hashing password  -->
+* npm install --save bcryptjs
 
 ### Run 
 * prod -- node app.js

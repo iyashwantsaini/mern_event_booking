@@ -5,7 +5,11 @@ const graphqlHttp=require('express-graphql');
 // getting data using object destructuring
 const { buildSchema } = require('graphql');
 const mongoose= require('mongoose');
+const bcrypt=require('bcryptjs');
+
+// Models
 const Event=require('./models/event');
+const User=require('./models/user');
 
 
 const app = express();
@@ -25,7 +29,8 @@ app.use('/graphql',
     // ! means not nullable
 
     // createEvent(...): Event == means when you call create event you must return an event
-    
+    //  password should be nullable in type as we don't want to send it to any user
+
     schema: buildSchema(`
         type Event{
             _id: ID!
@@ -34,6 +39,12 @@ app.use('/graphql',
             price: Float!
             date: String!
         }
+        
+        type User{
+            _id:ID!
+            email: String!
+            password: String
+        }
 
         input EventInput{
             title: String!
@@ -41,13 +52,19 @@ app.use('/graphql',
             price: Float!
             date: String!
         }
-    
+        
+        input UserInput{
+            email: String!
+            password: String!
+        }
+
         type RootQuery{
             events: [Event!]!
         }
 
         type RootMutation{
             createEvent(eventInput: EventInput): Event
+            createUser(userInput: UserInput) : User
         }
         
         schema{
@@ -55,6 +72,7 @@ app.use('/graphql',
             mutation: RootMutation
         }
     `),
+
     // root value key -- points to object having all resolvers
     rootValue: {
         // names of queries and resolvers are same
@@ -94,6 +112,7 @@ app.use('/graphql',
                 price: +args.eventInput.price,
                 date: new Date(args.eventInput.date)
             });
+            // return here will show graphql to wait while Operation is completed
             return event
             .save()
             .then(result => {
@@ -106,6 +125,33 @@ app.use('/graphql',
             })
             .catch(err => {
                 console.log(err);
+                throw err;
+            });
+        },
+        createUser: args => {
+            return User.findOne({email:args.userInput.email})
+            .then(user=>{
+                if(user){
+                    throw new Error('User with same email exists already!');
+                }
+                // if no valid user with same email is found
+                return bcrypt.hash(args.userInput.password, 12);
+            })
+            // result of bcrypt.hash(..)
+            .then(hashedPass=>{
+                const user = new User({
+                    email: args.userInput.email,
+                    password: hashedPass
+                });
+                // return promise like object
+                return user.save();
+            })
+            // result of user.save()
+            .then(result=>{
+                // password:null so that hashed pass will not even show up 
+                return {...result._doc,password:null,_id:result.id};
+            })
+            .catch(err=>{
                 throw err;
             });
         }
@@ -125,3 +171,4 @@ mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PA
 })
 
 // merng ,merng
+// test1@gmail.com,test1
