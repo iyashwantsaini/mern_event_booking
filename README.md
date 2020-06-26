@@ -33,8 +33,8 @@
 ** Event booking API **
 1. Event - Create, Update, Delete, View(Read)
 2. Users - Connected to events
-         - Filters -- CreatedBy, Booked
-         - BooksEvents, Cancel Booking
+         || Filters -- CreatedBy, Booked
+         || BooksEvents, Cancel Booking
 
     
 
