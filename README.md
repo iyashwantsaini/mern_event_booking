@@ -42,12 +42,18 @@
 <!-- autostart -->
 * npm install --save-dev nodemon 
 <!-- graph for express -->
-* npm install -save express-graphql graphql
-
+* npm install --save express-graphql graphql
+* npm install --save mongoose 
 
 ### Run 
 * prod -- node app.js
 * dev -- npm start(uses nodemon)
+
+### To kill all node ports
+* killall node
+
+### Error Fixes
+* if graphiql not working try on "http" instead of "https"
 
 
     

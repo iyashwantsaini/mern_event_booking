@@ -4,20 +4,28 @@ const bodyParser=require('body-parser');
 const graphqlHttp=require('express-graphql');
 // getting data using object destructuring
 const { buildSchema } = require('graphql');
+const mongoose= require('mongoose');
+const Event=require('./models/event');
+
 
 const app = express();
 
-const events = [];
+// const events = [];
 
 app.use(bodyParser.json()); // to parse incoming json bodies
 
 // all req are sent to /graphql
 app.use('/graphql',
     graphqlHttp({
+    
     // point to schema
     // pass props in schema
     // String! means type is string but can't be null
     // every event must have an ID
+    // ! means not nullable
+
+    // createEvent(...): Event == means when you call create event you must return an event
+    
     schema: buildSchema(`
         type Event{
             _id: ID!
@@ -53,21 +61,52 @@ app.use('/graphql',
         events: () => {
             return events;
         },
-        createEvent:(args)=>{
-            const event={
-                _id:Math.random().toString(),
-                title:args.eventInput.title,
-                description:args.eventInput.description,
-                price:+args.eventInput.price,
-                date:args.eventInput.date
-            };
-            events.push(event);
-            return event;
+        createEvent: args =>{
+            
+            // simple static method
+            // const event={
+            //     _id:Math.random().toString(),
+            //     title:args.eventInput.title,
+            //     description:args.eventInput.description,
+            //     price:+args.eventInput.price,
+            //     date:args.eventInput.date
+            // };
+            // events.push(event);
+            // return event;
+
+            // using mongoDB to make event on ATLAS
+            const event=new Event({
+                title: args.eventInput.title,
+                description: args.eventInput.description,
+                price: +args.eventInput.price,
+                date: new Date(args.eventInput.date)
+            });
+            return event
+            .save()
+            .then(result => {
+                console.log(result);
+                // spread operator._doc : gives all core props of our object
+                // return { ...result._doc };
+                return result;
+            })
+            .catch(err => {
+                console.log(err);
+                throw err;
+            });
         }
     },
-    graphiql:true
+    graphiql: true
 }));
 
-app.listen(3000,()=>{
-    console.log('listening on port 3000');
-});
+// connect to mongo via mongoose
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-mmohl.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`)
+.then(()=>{
+    app.listen(3000,()=>{
+        console.log('http://localhost:3000');
+    });
+})
+.catch(err=>{
+    console.log(err);
+})
+
+// merng ,merng

@@ -1,0 +1,7 @@
+{
+    "env":{
+        "MONGO_USER":"merng",
+        "MONGO_PASSWORD":"merng",
+        "MONGO_DB":"events-merng"
+    }
+}
