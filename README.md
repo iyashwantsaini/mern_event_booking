@@ -22,6 +22,13 @@
 }
 ```
 
+### Operation types in GraphQL
+* Query -- "for GET"
+* Mutation -- "for POST/PUT/PATCH/DELETE"
+* Subscription -- "Setup realtime connection with sockets"
+
+
+
 
 
 
