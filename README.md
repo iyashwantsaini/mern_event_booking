@@ -12,6 +12,7 @@
 * No problem here regarding queries (very flexible).
 * Only POST requests for every type of request to one single endpoint.
 * Operation definitions and Resolvers.
+* graphQL is a typed language.
 * Eg. Query Language
 ```
 {
@@ -38,7 +39,16 @@
 
 ### Packages
 * npm install --save express body-parser
-* npm install --save-dev nodemon
+<!-- autostart -->
+* npm install --save-dev nodemon 
+<!-- graph for express -->
+* npm install -save express-graphql graphql
+
+
+### Run 
+* prod -- node app.js
+* dev -- npm start(uses nodemon)
+
 
     
 
