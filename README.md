@@ -13,9 +13,9 @@
 * EG. 
 ```
 {
-    query {
-        user{
-            name 
+    query { //operation : type
+        user{ //operation : endpoint
+            name //requested fields 
             age
         }
     }
