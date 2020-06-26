@@ -29,6 +29,15 @@
 * Mutation -- "for POST/PUT/PATCH/DELETE"
 * Subscription -- "setup realtime connection with sockets"
 
+### Design 
+** Event booking API **
+1. Event - Create, Update, Delete, View(Read)
+2. Users - Connected to events
+         - Filters -- CreatedBy, Booked
+         - BooksEvents, Cancel Booking
+
+    
+
 
 
 
