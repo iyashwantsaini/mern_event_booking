@@ -13,6 +13,18 @@ const app = express();
 
 // const events = [];
 
+// CORS
+app.use((req,res,next)=>{
+  res.setHeader('Access-Control-Allow-Origin','*');
+  // browser automatically send options req so allow it
+  res.setHeader('Access-Control-Allow-Methods','POST,GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
+  if(req.method=='OPTIONS'){
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // run on every resolver and request
 app.use(isAuth);
 

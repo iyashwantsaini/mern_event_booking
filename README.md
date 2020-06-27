@@ -72,3 +72,7 @@
 ### Remember 
  
 - Dates are passed via "new Date().toISOString()"
+
+### CORS
+
+ - remember to set CORS policy to server
