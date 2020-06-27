@@ -7,9 +7,14 @@ const mongoose = require("mongoose");
 const graphQLSchema = require('./graphql/schema/index');
 const graphQLResolvers = require('./graphql/resolvers/index');
 
+const isAuth = require('./middleware/is_auth');
+
 const app = express();
 
 // const events = [];
+
+// run on every resolver and request
+app.use(isAuth);
 
 app.use(bodyParser.json()); // to parse incoming json bodies
 

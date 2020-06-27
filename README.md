@@ -53,6 +53,8 @@
 - npm install --save mongoose
 <!--for hashing password  -->
 - npm install --save bcryptjs
+<!-- to generate web token for login -->
+- npm install --save jsonwebtoken
 
 ### Run
 
