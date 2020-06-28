@@ -63,8 +63,10 @@ button{
 .main-navigation__items a.active
 {
     color: mediumvioletred;
+    background-color: aliceblue;
 }
 .main-navigation__items button:hover,
 .main-navigation__items button:active{
     color: mediumvioletred;
+    background-color: aliceblue;
 }
