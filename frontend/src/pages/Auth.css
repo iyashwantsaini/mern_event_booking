@@ -4,7 +4,9 @@
     margin: 2rem ;
 }
 .form-control labels,
-.form-control input{
+.form-control input,
+.form-control textarea
+{
     width: 40%;
     display:block;
     padding: 0.4rem;
@@ -24,6 +26,7 @@
     margin-right: 0.5rem;
     box-shadow: 0.2rem 0.2rem 0.2rem aqua;
     cursor: pointer;
+    font-weight: bolder;
 }
 
 .form-actions button:hover,

@@ -7,6 +7,7 @@
     margin-right: 0.5rem;
     box-shadow: 0.2rem 0.2rem 0.2rem aqua;
     cursor: pointer;
+    font-weight: bolder;
 }
 
 button:hover,
@@ -19,4 +20,19 @@ button:active{
     text-align: center;
     padding: 3rem;
     margin: 3rem auto;
+}
+
+.events-list{
+    margin-top: 2rem;
+    width: 40rem;
+    max-width: 80%;
+    margin: 2rem auto;
+    list-style: none;
+    padding: 0;
+}
+
+.events-list-item{
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid royalblue;
 }
