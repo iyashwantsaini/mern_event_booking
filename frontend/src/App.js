@@ -50,6 +50,9 @@ class App extends Component {
               {this.state.token && 
                 <Redirect from="/auth" to="/events" exact />
               }
+              {!this.state.token && 
+                <Redirect from="/bookings" to="/auth" exact />
+              }
 
               {/* exact means that if exactly / then only redirect */}
               {/* only redirect of not loggedin */}

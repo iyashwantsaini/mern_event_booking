@@ -18,24 +18,29 @@ const mainNavigation = (props) => (
           <nav className="main-navigation__items">
             <ul>
               {/* due to navlinks there is no reload */}
-              
+
               <li>
                 <NavLink to="/events">Events</NavLink>
               </li>
-              
-              { context.token && (
-              <li>
-                <NavLink to="/bookings">Bookings</NavLink>
-              </li>
+
+              {/* only render if loggedin */}
+              {context.token && (
+                <li>
+                  <NavLink to="/bookings">Bookings</NavLink>
+                </li>
+              )}
+              {context.token && (
+                <li>
+                  <button onClick={context.logout}>Logout</button>
+                </li>
               )}
 
               {/* only render it if not loggedin  */}
-              { !context.token &&  (
-              <li>
-                <NavLink to="/auth">Authenticate</NavLink>
-              </li>
+              {!context.token && (
+                <li>
+                  <NavLink to="/auth">Authenticate</NavLink>
+                </li>
               )}
-  
             </ul>
           </nav>
         </header>

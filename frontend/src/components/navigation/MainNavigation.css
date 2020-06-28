@@ -25,21 +25,46 @@
     margin: 0;
     padding: 0;
     list-style: none;
+    float: right;
 }
 .main-navigation__items li{
     margin: 0 1rem;
 }
+button{
+    text-decoration: none;
+    font-size: large;
+    font-weight: bolder;
+    border: 2px solid white;
+    font: inherit;
+    cursor: pointer;
+    background-color: pink;
+    color: black;
+    font-weight: bolder;
+}
 /* here a is navlink */
 .main-navigation__items a{
     text-decoration: none;
-    color: white;
     font-size: large;
     font-weight: bolder;
+    font: inherit;
+    cursor: pointer;
+    border: 2px solid white;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: pink;
+    color: black;
+    font-size: larger;
+    font-weight: bolder;
 }
+
 .main-navigation__items a:hover,
 .main-navigation__items a:active,
 /* this a.active class is added by navlink */
 .main-navigation__items a.active
 {
-    color: lime;
+    color: mediumvioletred;
+}
+.main-navigation__items button:hover,
+.main-navigation__items button:active{
+    color: mediumvioletred;
 }
