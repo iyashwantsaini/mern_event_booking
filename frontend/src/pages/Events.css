@@ -1,38 +1,10 @@
-.create-event{
-    background-color: darkviolet;
-    font: inherit;
-    border: 2px solid lime;
-    border-radius: 10px;
-    padding: 0.8rem;
-    margin-right: 0.5rem;
-    box-shadow: 0.2rem 0.2rem 0.2rem aqua;
-    cursor: pointer;
-    font-weight: bolder;
+.events-control {
+  text-align: center;
+  border: 1px solid #5101d1;
+  padding: 1rem;
+  margin: 2rem auto;
+  width: 30rem;
+  max-width: 80%;
 }
 
-button:hover,
-button:active{
-    background-color: chartreuse;
-    border-color: darkgreen;
-}
 
-.events-control{
-    text-align: center;
-    padding: 3rem;
-    margin: 3rem auto;
-}
-
-.events-list{
-    margin-top: 2rem;
-    width: 40rem;
-    max-width: 80%;
-    margin: 2rem auto;
-    list-style: none;
-    padding: 0;
-}
-
-.events-list-item{
-    margin: 1rem 0;
-    padding: 1rem;
-    border: 1px solid royalblue;
-}

@@ -1,67 +1,76 @@
 import React, { Component } from "react";
+
 import "./Auth.css";
 import AuthContext from "../context/auth-context";
 
 class AuthPage extends Component {
   state = {
-    isLoggedIn: true,
+    isLogin: true,
   };
 
   static contextType = AuthContext;
 
   constructor(props) {
     super(props);
-    this.emailElement = React.createRef();
-    this.PasswordElement = React.createRef();
+    this.emailEl = React.createRef();
+    this.passwordEl = React.createRef();
   }
 
   switchModeHandler = () => {
     this.setState((prevState) => {
-      return { isLoggedIn: !prevState.isLoggedIn };
+      return { isLogin: !prevState.isLogin };
     });
   };
 
   submitHandler = (event) => {
     event.preventDefault();
-    const email = this.emailElement.current.value;
-    const password = this.PasswordElement.current.value;
+    const email = this.emailEl.current.value;
+    const password = this.passwordEl.current.value;
+
     if (email.trim().length === 0 || password.trim().length === 0) {
       return;
     }
 
-    let reqBody = {
+    let requestBody = {
       query: `
-                query{
-                    login(email:"${email}",password:"${password}"){
-                        userId
-                        token
-                        tokenExpiration
-                    }
-                }
-            `,
+        query Login($email: String!, $password: String!) {
+          login(email: $email, password: $password) {
+            userId
+            token
+            tokenExpiration
+          }
+        }
+      `,
+      variables: {
+        email: email,
+        password: password,
+      },
     };
 
     // if not logged in so change query to signup
-    if (!this.state.isLoggedIn) {
+    if (!this.state.isLogin) {
       // req to bckend
       // console.log(email);
       // console.log(password);
-
-      reqBody = {
+      requestBody = {
         query: `
-                mutation{
-                    createUser(userInput:{email:"${email}",password:"${password}"}){
-                        _id
-                        email
-                    }
-                }
-            `,
+          mutation CreateUser($email: String!, $password: String!) {
+            createUser(userInput: {email: $email, password: $password}) {
+              _id
+              email
+            }
+          }
+        `,
+        variables: {
+          email: email,
+          password: password,
+        },
       };
     }
 
     fetch("http://localhost:3001/graphql", {
       method: "POST",
-      body: JSON.stringify(reqBody),
+      body: JSON.stringify(requestBody),
       headers: {
         "Content-Type": "application/json",
       },
@@ -75,7 +84,7 @@ class AuthPage extends Component {
       .then((resData) => {
         // here we get our token
         // send this token to parent using context
-        // console.log(resData);
+        console.log(resData);
         // if(this.state.isLoggedIn){}
         // OR
         if (resData.data.login.token) {
@@ -95,21 +104,17 @@ class AuthPage extends Component {
     return (
       <form className="auth-form" onSubmit={this.submitHandler}>
         <div className="form-control">
-          <label htmlFor="email">E-mail</label>
-          <input type="email" id="email" ref={this.emailElement}></input>
+          <label htmlFor="email">E-Mail</label>
+          <input type="email" id="email" ref={this.emailEl} />
         </div>
         <div className="form-control">
           <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            ref={this.PasswordElement}
-          ></input>
+          <input type="password" id="password" ref={this.passwordEl} />
         </div>
         <div className="form-actions">
           <button type="submit">Submit</button>
           <button type="button" onClick={this.switchModeHandler}>
-            Switch to {this.state.isLoggedIn ? "Signup" : "Login"}
+            Switch to {this.state.isLogin ? "Signup" : "Login"}
           </button>
         </div>
       </form>

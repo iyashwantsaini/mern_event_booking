@@ -1,39 +1,37 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+const express = require('express');
+const bodyParser = require('body-parser');
 // exports a valid middleware fn for parsing graphql queries
 const graphqlHttp = require("express-graphql");
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const graphQLSchema = require('./graphql/schema/index');
 const graphQLResolvers = require('./graphql/resolvers/index');
-
-const isAuth = require('./middleware/is_auth');
+const isAuth = require('./middleware/is-auth');
 
 const app = express();
 
 // const events = [];
 
+app.use(bodyParser.json()); // to parse incoming json bodies
+
 // CORS
-app.use((req,res,next)=>{
-  res.setHeader('Access-Control-Allow-Origin','*');
-  // browser automatically send options req so allow it
-  res.setHeader('Access-Control-Allow-Methods','POST,GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');
-  if(req.method=='OPTIONS'){
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+   // browser automatically send options req so allow it
+  res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
   next();
 });
 
-// run on every resolver and request
 app.use(isAuth);
-
-app.use(bodyParser.json()); // to parse incoming json bodies
 
 // OUR GRAPHQL API
 // all req are sent to /graphql
 app.use(
-  "/graphql",
+  '/graphql',
   graphqlHttp({
     // point to schema
     schema: graphQLSchema,
@@ -57,7 +55,3 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
-// merng ,merng
-// test1@gmail.com,test1
-// yash@gamil.com, yash@pass

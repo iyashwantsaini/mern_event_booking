@@ -45,6 +45,8 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 <!-- for routing to diff pages -->
 - npm install --save react-router-dom
 <!--  -->
+- npm install --save react-chartjs
+- npm install --save chart.js@^1.1.1
 
 ## Learn More
 

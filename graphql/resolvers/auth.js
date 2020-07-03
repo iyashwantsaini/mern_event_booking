@@ -1,22 +1,21 @@
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Models
-const User = require("../../models/user");
+const User = require('../../models/user');
 
 module.exports = {
-  createUser: async (args) => {
+  createUser: async args => {
     try {
       const existingUser = await User.findOne({ email: args.userInput.email });
       if (existingUser) {
-        throw new Error("User with same email exists already!");
+        throw new Error('User exists already.');
       }
       // if no valid user with same email is found
-      const hashedPass = await bcrypt.hash(args.userInput.password, 12);
+      const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
       // result of bcrypt.hash(..)
       const user = new User({
         email: args.userInput.email,
-        password: hashedPass,
+        password: hashedPassword
       });
       // return promise like object
       const result = await user.save();
@@ -27,29 +26,33 @@ module.exports = {
       throw err;
     }
   },
-  login: async ({email,password}) =>{
-    const user = await User.findOne({email:email});
-    if(!user){
+  login: async ({ email, password }) => {
+    const user = await User.findOne({ email: email });
+    if (!user) {
       throw new Error('User does not exist!');
     }
     // compare stored and incoming password
-    const isEqual= await bcrypt.compare(password,user.password);
-
+    const isEqual = await bcrypt.compare(password, user.password);
     // user present but pass incorrect
-    if(!isEqual){
+    if (!isEqual) {
       throw new Error('Password is incorrect!');
     }
-
     // user is loggedin
     // now generate a token
     // this is a synchronous task
     // provide private key for hashing
     // expires in 1 hour
-    const token= jwt.sign({userId:user.id,email:user.email},'somesupersecretkey',{expiresIn:'1h'});
-    return {userId:user.id,token:token,tokenExpiration: 1}
-
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      'somesupersecretkey',
+      {
+        expiresIn: '1h'
+      }
+    );
+    return { userId: user.id, token: token, tokenExpiration: 1 };
   }
 };
+
 
 // Simple Promise syntax
 

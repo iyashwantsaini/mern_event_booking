@@ -1,9 +1,7 @@
-const { dateToString } = require("../../helpers/date");
-// Models
-const Event = require("../../models/event");
-const {transformEvent,user } =require('./resolverhelpers');
-const User=require('../../models/user');
+const Event = require('../../models/event');
+const User = require('../../models/user');
 
+const { transformEvent } = require('./merge');
 
 module.exports = {
   // names of queries and resolvers are same
@@ -12,7 +10,7 @@ module.exports = {
     // return Event.find().populate('creator')
     try {
       const events = await Event.find();
-      return events.map((event) => {
+      return events.map(event => {
         // convert mongoDB _id to a string so that it can be viewed & understood by graphQL
         // return {...event._doc,_id:event._doc._id.toString()};
         // or
@@ -22,9 +20,9 @@ module.exports = {
       throw err;
     }
   },
-  createEvent: async (args,req) => {
-    if(!req.isAuth){
-      throw new Error('User unauthenticated!');
+  createEvent: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated!');
     }
     // simple static method
     // const event={
@@ -43,32 +41,25 @@ module.exports = {
       description: args.eventInput.description,
       price: +args.eventInput.price,
       date: new Date(args.eventInput.date),
-      creator: "5ef5d699c216df6db7194a64",
+      creator: req.userId
     });
-
     let createdEvent;
     // return/await here will show graphql to wait while Operation is completed
     try {
       const result = await event.save();
-      createdEvent = {
-        ...result._doc,
-        password: null,
-        _id: result.id,
-        date: dateToString(event._doc.date),
-        creator: user.bind(this, result._doc.creator),
-      };
-      const creator = await User.findById("5ef5d699c216df6db7194a64");
+      createdEvent = transformEvent(result);
+      const creator = await User.findById(req.userId);
       // for user.findById()
-
       if (!creator) {
-        throw new Error("User does not exist!");
+        throw new Error('User not found.');
       }
       creator.createdEvents.push(event);
       await creator.save();
+
       return createdEvent;
     } catch (err) {
       console.log(err);
       throw err;
     }
-  },
+  }
 };
