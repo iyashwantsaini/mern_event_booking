@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href=""><img src="https://raw.githubusercontent.com/meyash/mern_graphql_master/master/merng.png" alt="logo" width="200"></a>
+  <a href=""><img src="https://raw.githubusercontent.com/meyash/mern_graphql_master/master/merng.jpg" alt="logo" width="200"></a>
   <br>
     MongoDB+Express+React+Node+GraphQL
   <br>
